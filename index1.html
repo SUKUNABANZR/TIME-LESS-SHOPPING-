@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIME LESS STORE PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{background:#f3f4f6;color:#111827;}
+
+header{
+background:#111827;
+padding:15px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{font-size:28px;font-weight:700;color:white;}
+.logo span{color:#f59e0b;}
+
+.search-box{width:45%;display:flex;}
+.search-box input{width:100%;padding:13px;border:none;outline:none;border-radius:8px 0 0 8px;}
+.search-box button{padding:13px 18px;border:none;background:#f59e0b;color:white;font-weight:bold;border-radius:0 8px 8px 0;}
+
+.top-actions{display:flex;gap:15px;align-items:center;}
+
+.cart-btn,.admin-btn{
+background:#f59e0b;color:white;padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer;
+}
+
+.hero{
+height:350px;
+background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
+url('https://images.unsplash.com/photo-1441986300917-64674bd600d8');
+background-size:cover;background-position:center;
+display:flex;justify-content:center;align-items:center;text-align:center;color:white;
+}
+
+.hero h1{font-size:55px;margin-bottom:10px;}
+.hero p{font-size:18px;}
+
+.products-section{padding:50px 5%;}
+.section-title{font-size:35px;margin-bottom:30px;}
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.card{
+background:white;border-radius:18px;overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.card img{width:100%;height:250px;object-fit:cover;}
+
+.card-content{padding:18px;}
+
+.card-title{font-size:18px;font-weight:600;margin-bottom:10px;}
+
+.price{font-size:24px;font-weight:700;color:#f59e0b;margin-bottom:15px;}
+
+.actions{display:flex;flex-direction:column;gap:15px;}
+
+.qty{display:flex;align-items:center;gap:10px;}
+
+.qty button{
+width:35px;height:35px;border:none;background:#111827;color:white;
+border-radius:8px;cursor:pointer;
+}
+
+.buttons{display:flex;gap:10px;}
+
+.add-cart{
+flex:1;padding:12px;border:none;background:#f59e0b;color:white;font-weight:600;border-radius:10px;
+}
+
+.delete-btn{
+background:red;color:white;border:none;padding:12px;border-radius:10px;font-weight:bold;
+}
+
+.cart-panel{
+position:fixed;right:-450px;top:0;width:400px;height:100%;
+background:white;padding:25px;transition:0.4s;overflow-y:auto;z-index:2000;
+}
+
+.cart-panel.active{right:0;}
+
+.cart-header{display:flex;justify-content:space-between;}
+
+.close-cart{font-size:30px;cursor:pointer;}
+
+.cart-item{display:flex;gap:15px;background:#f9fafb;padding:10px;border-radius:12px;margin-bottom:15px;}
+
+.cart-item img{width:80px;height:80px;border-radius:10px;}
+
+.total{font-size:25px;font-weight:700;margin-top:20px;}
+
+.checkout{
+width:100%;padding:15px;background:#10b981;color:white;border:none;
+font-size:18px;border-radius:12px;margin-top:20px;cursor:pointer;
+}
+
+.admin-panel{
+position:fixed;inset:0;background:rgba(0,0,0,0.7);
+display:none;justify-content:center;align-items:center;z-index:3000;
+}
+
+.admin-box{
+background:white;padding:30px;width:90%;max-width:500px;border-radius:20px;
+}
+
+.admin-box input{
+width:100%;padding:15px;margin-bottom:15px;border:1px solid #ddd;border-radius:10px;
+}
+
+.admin-box button{
+width:100%;padding:15px;background:#111827;color:white;border:none;border-radius:10px;
+}
+
+footer{
+background:#111827;color:white;padding:30px;text-align:center;margin-top:50px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">TIME <span>LESS</span></div>
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Rechercher...">
+<button>🔍</button>
+</div>
+
+<div class="top-actions">
+<div class="admin-btn" onclick="openAdmin()">ADMIN</div>
+<div class="cart-btn" onclick="toggleCart()">🛒 Panier (<span id="cart-count">0</span>)</div>
+</div>
+</header>
+
+<section class="hero">
+<div>
+<h1>TIME LESS STORE</h1>
+<p>Le luxe à portée de main</p>
+</div>
+</section>
+
+<section class="products-section">
+<h2 class="section-title">Produits</h2>
+<div class="products" id="products"></div>
+</section>
+
+<div class="cart-panel" id="cartPanel">
+<div class="cart-header">
+<h2>Panier</h2>
+<div class="close-cart" onclick="toggleCart()">×</div>
+</div>
+
+<div id="cart-items"></div>
+
+<div class="total">Total : <span id="total">0</span> FCFA</div>
+
+<button class="checkout" onclick="checkout()">Commander</button>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+<div class="admin-box">
+<h2>Admin</h2>
+
+<input type="password" id="adminPassword" placeholder="Code">
+<button onclick="loginAdmin()">Connexion</button>
+
+<hr>
+
+<input id="productName" placeholder="Nom">
+<input id="productPrice" type="number" placeholder="Prix">
+<input id="productImage" placeholder="Image URL">
+
+<button onclick="addProduct()">Ajouter</button>
+
+<br><br>
+
+<button onclick="closeAdmin()" style="background:red;">Fermer</button>
+</div>
+</div>
+
+<footer>© 2026 TIME LESS STORE</footer>
+
+<script>
+
+let cart=[];
+let isAdmin=false;
+
+let products=[
+{name:'Sneakers',price:35000,image:'https://images.unsplash.com/photo-1542291026-7eec264c27ff'},
+{name:'Montre',price:45000,image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30'},
+{name:'T-Shirt',price:15000,image:'https://images.unsplash.com/photo-1521572267360-ee0c2909d518'}
+];
+
+function renderProducts(){
+let c=document.getElementById('products');
+c.innerHTML='';
+products.forEach((p,i)=>{
+c.innerHTML+=`
+<div class="card">
+<img src="${p.image}">
+<div class="card-content">
+<h3>${p.name}</h3>
+<div class="price">${p.price} FCFA</div>
+
+<div class="qty">
+<button onclick="dec(this)">-</button>
+<span>1</span>
+<button onclick="inc(this)">+</button>
+</div>
+
+<button class="add-cart" onclick="addCart('${p.name}',${p.price},'${p.image}',this)">Ajouter</button>
+
+${isAdmin?`<button class="delete-btn" onclick="del(${i})">Supprimer</button>`:''}
+
+</div>
+</div>`;
+});
+}
+
+function inc(b){b.parentElement.querySelector('span').innerText++;}
+function dec(b){let s=b.parentElement.querySelector('span');if(s.innerText>1)s.innerText--;}
+
+function addCart(n,p,img,b){
+let q=parseInt(b.parentElement.querySelector('span').innerText);
+cart.push({name:n,price:p,image:img,quantity:q});
+updateCart();
+}
+
+function updateCart(){
+let c=document.getElementById('cart-items');
+let t=0;
+c.innerHTML='';
+cart.forEach(i=>{
+t+=i.price*i.quantity;
+c.innerHTML+=`<div class="cart-item"><img src="${i.image}"><div><h4>${i.name}</h4><p>${i.quantity} x ${i.price}</p></div></div>`;
+});
+document.getElementById('total').innerText=t;
+document.getElementById('cart-count').innerText=cart.length;
+}
+
+function toggleCart(){document.getElementById('cartPanel').classList.toggle('active');}
+
+function openAdmin(){document.getElementById('adminPanel').style.display='flex';}
+function closeAdmin(){document.getElementById('adminPanel').style.display='none';}
+
+function loginAdmin(){
+if(document.getElementById('adminPassword').value==='TIMELESS2026'){
+isAdmin=true;
+alert('OK');
+renderProducts();
+closeAdmin();
+}else alert('Erreur');
+}
+
+function addProduct(){
+let n=document.getElementById('productName').value;
+let p=document.getElementById('productPrice').value;
+let i=document.getElementById('productImage').value;
+products.push({name:n,price:p,image:i});
+renderProducts();
+}
+
+function del(i){
+products.splice(i,1);
+renderProducts();
+}
+
+function checkout(){
+
+if(cart.length===0){alert("Panier vide");return;}
+
+let total=0;
+cart.forEach(i=>total+=i.price*i.quantity);
+
+// Wave 1
+let wave="https://pay.wave.com/checkout/TON_ID?amount="+total;
+
+let msg=`Commande TIME LESS STORE\nTotal: ${total} FCFA\nMerci d'envoyer la capture Wave`;
+
+let wa="https://wa.me/2250708340726?text="+encodeURIComponent(msg);
+
+window.open(wave,"_blank");
+setTimeout(()=>window.open(wa,"_blank"),2000);
+
+alert("Paiement + WhatsApp ouverts");
+}
+
+renderProducts();
+
+</script>
+
+</body>
